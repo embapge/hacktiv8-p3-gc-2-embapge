@@ -1,109 +1,183 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/GMrD03Jz)
 # Graded Challenge 1 - P3
 
-Graded Challenge ini dibuat guna mengevaluasi pembelajaran pada Hacktiv8 Program Fulltime Golang khususnya pada pembelajaran mongoDB dan implementasi microservice golang
+Graded Challenge ini dibuat guna mengevaluasi pembelajaran pada Hacktiv8 Program Fulltime Golang khususnya pada pembelajaran MongoDB dan implementasi microservice Golang.
+
+---
 
 ## Assignment Objectives
-Graded Challenge 1 ini dibuat guna mengevaluasi pemahaman mongoDB dan Microservice sebagai berikut:
+
+Graded Challenge 1 ini dibuat guna mengevaluasi pemahaman MongoDB dan Microservice sebagai berikut:
 
 - Mampu memahami konsep Microservice
-- Mampu memahami konsep Mongo DB
-- Mampu mengimplementasikan Mongo DB ke REST APi Golang
+- Mampu memahami konsep MongoDB
+- Mampu mengimplementasikan MongoDB ke REST API Golang
 
-## Assignment Directions: Restful API
-Buatlah sebuah REST API dengan menggunakan Echo Golang dan implementasikan database MongoDB sesuai dengan kriteria yang telah ditentukan
-1. Buat service <strong>Payment</strong> yang memiliki 1 endpoint sebagai berikut:
-	- /payments (POST) - Create a new payment
-2. 
-3. Buat service <strong>Shopping</strong> yang terintegrasi dengan service payment yang memiliki endpoint sebagai berikut:
-	- /transactions (POST) - Create a new transactions
-	- /transactions (GET) - Retrieve all transactions
-	- /transactions/{id} (GET) - Retrieve a specific transactions by ID
-	- /transactions/{id} (PUT) - Update a transaction informations
-	- /transactions/{id} (DELETE) - Delete a transaction informations
-    - /products (POST) - Create a new product
-    - /products (GET) - Retrieve all products
-    - /products/{id} (GET) - Retrieve a specific product by ID
-    - /products/{id} (PUT) - Update a product informations
-    - /products/{id} (DELETE) - Delete a product informations
-> Pada Endpoint /transactions (POST) Sambungkan dengan service payment untuk melakukan pembayaran, Jika pembayaran berhasil maka transaksi berhasil, jika gagal maka transaksi juga gagal
+---
 
-Gunakan function untuk handle error seperti yang dilakukan pada phase 2, Kalian harus menggunakan mongodb untuk menyimpan dan melakukan transaksi penyewaan lapangan.
+## Assignment Directions: RESTful API
 
-#### Sebagai tambahan dari requirement yang sudah diberikan sebelumnya, Student juga diharapkan untuk memahami dan menerapkan konsep-konsep berikut:
-- Cloud Deployment using GCP
-Student diharapkan untuk mengimplementasikan Cloud Deployment menggunakan Google Cloud Platform (GCP).
-Pastikan aplikasi Anda dapat diakses secara publik setelah deployment.
-Sediakan dokumentasi sederhana mengenai langkah-langkah deployment yang Anda lakukan.
-- Job Scheduling
-Implementasikan konsep job scheduling untuk beberapa proses yang memerlukannya, seperti proses pembaharuan data atau pembersihan data yang tidak diperlukan.
-- Unit Test
-Buat unit test untuk memastikan bahwa setiap fungsi atau method dalam aplikasi Anda bekerja dengan semestinya.
-- Docker
-Kontainerisasi aplikasi Anda menggunakan Docker.
-Pastikan Anda menyediakan Dockerfile dan dokumentasi singkat tentang bagaimana menjalankan aplikasi Anda menggunakan Docker.
+Buatlah sebuah **REST API** menggunakan **Echo Golang** dan implementasikan database **MongoDB** sesuai kriteria berikut:
+
+### Microservice yang harus dibangun:
+
+#### **1. Payment Service**
+- Endpoint:  
+  - `/payments` (POST) - Create a new payment
+
+#### **2. Shopping Service**
+- Endpoints:  
+  - `/transactions` (POST) - Create a new transaction (harus call Payment Service; jika payment gagal, transaksi gagal)
+  - `/transactions` (GET) - Retrieve all transactions
+  - `/transactions/{id}` (GET) - Retrieve transaction by ID
+  - `/transactions/{id}` (PUT) - Update transaction
+  - `/transactions/{id}` (DELETE) - Delete transaction
+  - `/products` (POST) - Create new product
+  - `/products` (GET) - Retrieve all products
+  - `/products/{id}` (GET) - Retrieve product by ID
+  - `/products/{id}` (PUT) - Update product
+  - `/products/{id}` (DELETE) - Delete product
+
+> **Catatan:**  
+> Pada endpoint `/transactions (POST)` di Shopping Service, harus ada integrasi ke Payment Service (call endpoint `/payments` secara synchronous). Jika pembayaran gagal, transaksi juga gagal.
+
+---
 
 ## Database Schema
-> Cobalah buat Database Schema dari analisa kebutuhan endpoint diatas, untuk nama table sebagai berikut :
->  - Products
->  - Transactions
->  - Payments
+
+Berikut adalah _usulan skema database_ (MongoDB Collection) berdasarkan kebutuhan endpoint dan constraint:
+
+### **Products Collection**
+
+| Field      | Type   | Description                        | Constraint           |
+|------------|--------|------------------------------------|----------------------|
+| id         | String | Unique identifier for product       | primary key, unique  |
+| name       | String | Name of the product                |                      |
+| price      | Float  | Price of the product               |                      |
+| stock      | Int    | Quantity in stock                  |                      |
+| created_at | Date   | Timestamp when product was created |                      |
+
+---
+
+### **Transactions Collection**
+
+| Field        | Type   | Description                              | Constraint           |
+|--------------|--------|------------------------------------------|----------------------|
+| id           | String | Unique identifier for transaction        | primary key, unique  |
+| product_id   | String | Refers to product                        |                      |
+| payment_id   | String | Refers to payment                        |                      |
+| quantity     | Int    | Number of product purchased              |                      |
+| total        | Float  | Total price of the transaction           |                      |
+| status       | String | Status: success/failed                   |                      |
+| created_at   | Date   | Timestamp when transaction was created   |                      |
+
+---
+
+### **Payments Collection**
+
+| Field      | Type   | Description                              | Constraint             |
+|------------|--------|------------------------------------------|------------------------|
+| id         | String | Unique identifier for payment            | primary key, unique    |
+| email      | String | Payer email                              | unique index           |
+| amount     | Float  | Payment amount                           |                        |
+| status     | String | Payment status: success/failed/pending   |                        |
+| created_at | Date   | Timestamp when payment was created       |                        |
+
+---
+
+**Catatan:**
+- **id** di semua collection harus unique (primary key).
+- **email** di Payments harus unique (gunakan unique index pada field email).
+- Field dapat dikembangkan/disesuaikan lagi sesuai kebutuhan aplikasi.
+
+---
+
+## Error Handling
+
+- Gunakan function/utility error handler seperti pada Phase 2.
+- **WAJIB** menangani semua error case, edge case, dan validasi input.
+
+---
+
+## Docker Kontainerisasi
+
+- Siapkan **Dockerfile** di masing-masing service.
+- Sertakan dokumentasi singkat cara build & run aplikasi dengan Docker.
+
+---
+
+## Cloud Deployment (GCP)
+
+- Deploy aplikasi ke GCP (Google Cloud Run).
+- **Aplikasi WAJIB dapat diakses publik**.
+- Lampirkan dokumentasi deployment (langkah-langkah jelas dari build hingga running di GCP).
+
+---
+
+## Job Scheduling
+
+- Implementasikan **job scheduling** pada proses yang membutuhkan, contoh:
+  - Pembersihan data kadaluarsa
+  - Update status otomatis
+- Bisa menggunakan Cloud Scheduler (GCP) atau scheduler di dalam service.
+
+---
+
+## Unit Test
+
+- Buat **unit test** untuk memastikan setiap fungsi/method utama berjalan dengan benar.
+- Minimal test pada fitur core (produk, transaksi, payment).
+
+---
+
 ## Expected Results
 
-- Aplikasi terdiri dari 2 :
-- Service Shopping berjalan pada http://localhost:8080 dengan endpoint berikut :
-  - /transactions (POST) - Create a new transactions
-  - /transactions (GET) - Retrieve all transactions
-  - /transactions/{id} (GET) - Retrieve a specific transactions by ID
-  - /transactions/{id} (PUT) - Update a transaction informations
-  - /transactions/{id} (DELETE) - Delete a transaction informations
-  - /products (POST) - Create a new product
-  - /products (GET) - Retrieve all products
-  - /products/{id} (GET) - Retrieve a specific product by ID
-  - /products/{id} (PUT) - Update a product informations
-  - /products/{id} (DELETE) - Delete a product informations
-  
-- Service Payment berjalan pada http://localhost:8081
-  - /payments (POST) - Create a new payment
+Aplikasi terdiri dari **2 service**:
+- **Shopping Service** berjalan pada `http://localhost:8080` dengan endpoint:
+  - `/transactions` (CRUD)
+  - `/products` (CRUD)
+- **Payment Service** berjalan pada `http://localhost:8081` dengan endpoint:
+  - `/payments` (POST)
 
+**Ketentuan tambahan:**
+- Semua constraint id/email harus dipenuhi.
+- Semua operasi CRUD & integrasi pembayaran harus berfungsi.
+- Endpoint bisa diakses & didokumentasikan.
+- Unit test tersedia & berjalan.
+- Dokumentasi kode & deployment lengkap.
 
-### RESTRICTION:
-- The id field should be the primary key for the table.
-- The email field should have a unique index to prevent duplicate email addresses.
+---
 
+## RESTRICTION
 
----------- 
+- **id** = primary key dan harus unik.
+- **email** (jika ada) wajib unik (gunakan unique index).
+- **Tidak boleh hardcode sensitive value di kode (gunakan ENV/konfigurasi).**
 
-###  Assignment Submission
+---
 
-Push Assigment yang telah Anda buat ke akun Github Classroom Anda masing-masing.
+## Assignment Submission
 
-----------
+Push Assignment yang telah Anda buat ke akun Github Classroom Anda masing-masing.
+
+---
 
 ## Assignment Rubrics
 
-Aspect : 
-|Criteria|Meet Expectations|Points|
-|---|---|---|
-|Problem Solving|API Endpoints are implemented and working correctly |75 pts |
-|Database Design |MongoDB database meets the required specifications |10 pts|
-||Database queries are efficient and appropriately indexed |5 pts|
-|Readability|Code is well-documented and easy to read |5 pts|
-||Code includes appropriate comments and documentation |5 pts|
+| Criteria                                              | Meet Expectations                     | Points |
+|-------------------------------------------------------|---------------------------------------|--------|
+| Problem Solving (API endpoint & flow)                 | Implemented & working correctly       | 75 pts |
+| Database Design                                       | MongoDB schema sesuai kebutuhan       | 10 pts |
+| Database queries efficient & appropriately indexed    | Query efisien, index sesuai kebutuhan | 5 pts  |
+| Readability                                           | Code is well-documented & readable    | 5 pts  |
+| Documentation/comments                                | Cukup jelas & lengkap                 | 5 pts  |
 
+Total Points: **100**
 
-Notes:
-- Don't rush through the problem or try to solve it all at once.
-- Don't copy and paste code from external sources without fully understanding how it works.
-- Don't hardcode values or rely on assumptions that may not hold true in all 
-cases.
-- Don't forget to handle error cases or edge cases, such as invalid input or unexpected behavior.
-- Don't hesitate to refactor your code or make improvements based on feedback or new insights.
+---
 
+## Notes:
 
+- **Deadline:** W2D1 - 18.00 (telat = nilai 0)
 
-Total Points : 100
-
-Notes Deadline : W2D1 - 9.00AM
-
-Keterlambatan pengumpulan tugas mengakibatkan skor GC 1 menjadi 0.
+---
