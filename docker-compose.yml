@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: p3_w1_gc_embapge
+    volumes:
+      - mongo_data:/data/db
+    command: [--auth]
+
+  shopping-service:
+    build: ./shopping-service
+    container_name: shopping-service
+    restart: always
+    env_file:
+      - ./shopping-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - DB_NAME=p3_w1_gc_embapge
+    depends_on:
+      - mongodb
+    ports:
+      - "8080:8080"
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    restart: always
+    env_file:
+      - ./payment-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - DB_NAME=p3_w1_gc_embapge
+    depends_on:
+      - mongodb
+    ports:
+      - "8081:8081"
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    restart: always
+    env_file:
+      - ./gateway-service/.env
+    environment:
+      - SHOPPING_SERVICE_URL=http://shopping-service:8080
+      - PAYMENT_SERVICE_URL=http://payment-service:8081
+      - PORT=8000
+    depends_on:
+      - shopping-service
+      - payment-service
+    ports:
+      - "8000:8000"
+
+volumes:
+  mongo_data:
