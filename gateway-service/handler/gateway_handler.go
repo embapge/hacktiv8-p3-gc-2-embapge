@@ -16,21 +16,29 @@ func NewGatewayHandler() *GatewayHandler {
 
 func (h *GatewayHandler) ProxyToShoppingService(c echo.Context) error {
 	shoppingURL := os.Getenv("SHOPPING_SERVICE_URL")
-	resp, err := http.Get(shoppingURL + c.Request().RequestURI)
-	if err != nil {
-		return c.JSON(http.StatusBadGateway, map[string]string{"error": "Failed to connect to shopping service"})
-	}
-	defer resp.Body.Close()
-	return proxyResponse(c, resp)
+	return proxyRequest(c, shoppingURL)
 }
 
 func (h *GatewayHandler) ProxyToPaymentService(c echo.Context) error {
 	paymentURL := os.Getenv("PAYMENT_SERVICE_URL")
-	resp, err := http.Get(paymentURL + c.Request().RequestURI)
+	return proxyRequest(c, paymentURL)
+}
+
+func proxyRequest(c echo.Context, targetURL string) error {
+	req, err := http.NewRequest(c.Request().Method, targetURL+c.Request().RequestURI, c.Request().Body)
 	if err != nil {
-		return c.JSON(http.StatusBadGateway, map[string]string{"error": "Failed to connect to payment service"})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create proxy request"})
+	}
+
+	req.Header = c.Request().Header
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.JSON(http.StatusBadGateway, map[string]string{"error": "Failed to connect to the downstream service"})
 	}
 	defer resp.Body.Close()
+
 	return proxyResponse(c, resp)
 }
 

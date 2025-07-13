@@ -9,8 +9,25 @@ services:
     environment:
       MONGO_INITDB_DATABASE: p3_w1_gc_embapge
     volumes:
+      - ./mongo-config/mongod.conf:/etc/mongod.conf
       - mongo_data:/data/db
-    command: [--auth]
+    command: ["mongod", "--config", "/etc/mongod.conf"]
+
+  mongo-init:
+    image: mongo:7
+    restart: on-failure
+    depends_on:
+      - mongodb
+    command: >
+      bash -c "
+        echo 'Waiting for MongoDB to start...';
+        until mongosh --host mongodb --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'; do
+          sleep 1;
+        done;
+        echo 'MongoDB started. Initiating replica set...';
+        mongosh --host mongodb --eval 'rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"mongodb:27017\"}]})';
+        echo 'Replica set initiated.';
+      "
 
   shopping-service:
     build: ./shopping-service
