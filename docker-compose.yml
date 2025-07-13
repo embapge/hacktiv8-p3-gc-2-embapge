@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   mongodb:
-    image: mongo:6.0
+    image: mongo:7
     container_name: mongodb
     restart: always
     ports:
@@ -20,7 +20,8 @@ services:
       - ./shopping-service/.env
     environment:
       - MONGO_URI=mongodb://mongodb:27017
-      - DB_NAME=p3_w1_gc_embapge
+      - MONGO_DB=p3_w1_gc_embapge
+      - PORT=8080
     depends_on:
       - mongodb
     ports:
@@ -29,12 +30,13 @@ services:
   payment-service:
     build: ./payment-service
     container_name: payment-service
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./payment-service/.env
     environment:
       - MONGO_URI=mongodb://mongodb:27017
-      - DB_NAME=p3_w1_gc_embapge
+      - MONGO_DB=p3_w1_gc_embapge
+      - PORT=8081
     depends_on:
       - mongodb
     ports:
@@ -43,7 +45,7 @@ services:
   gateway-service:
     build: ./gateway-service
     container_name: gateway-service
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./gateway-service/.env
     environment:
