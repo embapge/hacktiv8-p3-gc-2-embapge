@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 	"p3-graded-challenge-1-embapge/payment-service/internal/dto"
-	"p3-graded-challenge-1-embapge/payment-service/internal/service"
+	"p3-graded-challenge-1-embapge/payment-service/internal/interfaces/service"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
