@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: auth-service-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypass
+    ports:
+      - "3306:3306"
+    volumes:
+      # host(komputer lokal):docker-container
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Jalankan SQL saat init
+      - ./auth-service-mysql:/var/lib/mysql # Simpan data DB di root folder project
