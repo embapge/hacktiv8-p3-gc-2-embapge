@@ -17,7 +17,7 @@ import (
 // @title Gateway API
 // @version 1.0
 // @description API Gateway for Shopping and Payment Services
-// @host 34.101.156.80:8000
+// @host 34.101.116.9:8000
 // @BasePath /
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
