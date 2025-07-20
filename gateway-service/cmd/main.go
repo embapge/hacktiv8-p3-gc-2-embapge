@@ -19,6 +19,9 @@ import (
 // @description API Gateway for Shopping and Payment Services
 // @host 34.101.156.80:8000
 // @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 // ===== Swagger Documentation for Shopping Service =====
 
@@ -32,6 +35,7 @@ import (
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /products [post]
+// @Security ApiKeyAuth
 func _SwaggerCreateProduct() {}
 
 // @Summary Get all products
@@ -41,6 +45,7 @@ func _SwaggerCreateProduct() {}
 // @Success 200 {array} ProductResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /products [get]
+// @Security ApiKeyAuth
 func _SwaggerGetAllProducts() {}
 
 // @Summary Get product by ID
@@ -53,6 +58,7 @@ func _SwaggerGetAllProducts() {}
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /products/{id} [get]
+// @Security ApiKeyAuth
 func _SwaggerGetProductByID() {}
 
 // @Summary Update a product
@@ -67,6 +73,7 @@ func _SwaggerGetProductByID() {}
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /products/{id} [put]
+// @Security ApiKeyAuth
 func _SwaggerUpdateProduct() {}
 
 // @Summary Delete a product
@@ -79,6 +86,7 @@ func _SwaggerUpdateProduct() {}
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /products/{id} [delete]
+// @Security ApiKeyAuth
 func _SwaggerDeleteProduct() {}
 
 // @Summary Create a new transaction
@@ -91,6 +99,7 @@ func _SwaggerDeleteProduct() {}
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /transactions [post]
+// @Security ApiKeyAuth
 func _SwaggerCreateTransaction() {}
 
 // @Summary Get all transactions
@@ -100,6 +109,7 @@ func _SwaggerCreateTransaction() {}
 // @Success 200 {array} TransactionResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /transactions [get]
+// @Security ApiKeyAuth
 func _SwaggerGetAllTransactions() {}
 
 // @Summary Get transaction by ID
@@ -112,6 +122,7 @@ func _SwaggerGetAllTransactions() {}
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /transactions/{id} [get]
+// @Security ApiKeyAuth
 func _SwaggerGetTransactionByID() {}
 
 // @Summary Update a transaction
@@ -126,6 +137,7 @@ func _SwaggerGetTransactionByID() {}
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /transactions/{id} [put]
+// @Security ApiKeyAuth
 func _SwaggerUpdateTransaction() {}
 
 // @Summary Delete a transaction
@@ -138,6 +150,7 @@ func _SwaggerUpdateTransaction() {}
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /transactions/{id} [delete]
+// @Security ApiKeyAuth
 func _SwaggerDeleteTransaction() {}
 
 // ===== Swagger Documentation for Payment Service =====
@@ -152,6 +165,7 @@ func _SwaggerDeleteTransaction() {}
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /payments [post]
+// @Security ApiKeyAuth
 func _SwaggerCreatePayment() {}
 
 // @Summary Login via Auth Service
@@ -182,6 +196,7 @@ func _SwaggerRegister() {}
 // @Produce json
 // @Success 200 {array} PaymentResponse
 // @Router /payments [get]
+// @Security ApiKeyAuth
 func _SwaggerGetAllPayments() {}
 
 // @Summary Get payment by ID
@@ -192,6 +207,7 @@ func _SwaggerGetAllPayments() {}
 // @Success 200 {object} PaymentResponse
 // @Failure 404 {object} ErrorResponse
 // @Router /payments/{id} [get]
+// @Security ApiKeyAuth
 func _SwaggerGetPaymentByID() {}
 
 // @Summary Delete payment by ID
@@ -202,6 +218,7 @@ func _SwaggerGetPaymentByID() {}
 // @Success 200 {object} map[string]string
 // @Failure 404 {object} ErrorResponse
 // @Router /payments/{id} [delete]
+// @Security ApiKeyAuth
 func _SwaggerDeletePayment() {}
 
 // ===== DTOs for Swagger =====
