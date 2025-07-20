@@ -6,6 +6,7 @@ import (
 
 	_ "p3-graded-challenge-1-embapge/gateway-service/docs"
 	"p3-graded-challenge-1-embapge/gateway-service/handler"
+	"p3-graded-challenge-1-embapge/gateway-service/middleware"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -204,10 +205,12 @@ func main() {
 		log.Println("No .env file found, using environment variables")
 	}
 
-	e := echo.New()
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	h := handler.NewGatewayHandler()
 
+	e := echo.New()
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
+	e.Use(middleware.JWTAuth)
 	// Proxy all /products* and /transactions* to shopping-service
 	e.Any("/products*", h.ProxyToShoppingService)
 	e.Any("/transactions*", h.ProxyToShoppingService)
@@ -219,6 +222,7 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
+
 	log.Println("Gateway running on port", port)
 	e.Logger.Fatal(e.Start(":" + port))
 }
