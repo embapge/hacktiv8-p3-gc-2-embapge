@@ -1,5 +1,5 @@
 # Dockerfile - Auth Service (Go + MongoDB)
-FROM golang:1.24-alpine as build
+FROM golang:1.24-alpine AS build
 
 WORKDIR /app
 COPY . .
@@ -12,5 +12,5 @@ WORKDIR /app
 COPY --from=build /app/auth-service /app/auth-service
 COPY .env .env
 
-EXPOSE 8081
+EXPOSE 8080
 CMD ["./auth-service"]

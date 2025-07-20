@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package payment;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "proto/payment";
+
+message CreatePaymentRequest{
+    float amount = 1;
+}
+
+message PaymentIDRequest{
+    string id = 1;
+}
+
+message PaymentResponse{
+    string id = 1;
+    float amount = 2;
+    string status = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+}
+
+message ListPaymentResponse{
+    repeated PaymentResponse payments = 1;
+}
+
+message PaymentMessageResponse{
+    string message = 1;
+}
+
+service PaymentService{
+    rpc CreatePayment(CreatePaymentRequest) returns (PaymentResponse);
+    rpc GetAllPayment(google.protobuf.Empty) returns (ListPaymentResponse);
+    rpc GetByIDPayment(PaymentIDRequest) returns (PaymentResponse);
+    rpc DeletePayment(PaymentIDRequest) returns (PaymentMessageResponse);
+}

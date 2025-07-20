@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"auth-service/internal/auth/domain"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

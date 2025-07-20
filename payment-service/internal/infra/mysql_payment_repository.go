@@ -2,7 +2,7 @@ package infra
 
 import (
 	"context"
-	"p3-graded-challenge-1-embapge/payment-service/internal/domain"
+	"p3-graded-challenge-2-embapge/payment-service/internal/domain"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -47,5 +47,30 @@ func (r *paymentRepository) UpdateStatus(ctx context.Context, id primitive.Objec
 		},
 	}
 	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": id}, update)
+	return err
+}
+func (r *paymentRepository) GetAll(ctx context.Context) (*[]domain.Payment, error) {
+	cursor, err := r.collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var payments []domain.Payment
+	for cursor.Next(ctx) {
+		var payment domain.Payment
+		if err := cursor.Decode(&payment); err != nil {
+			return nil, err
+		}
+		payments = append(payments, payment)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return &payments, nil
+}
+
+func (r *paymentRepository) Delete(ctx context.Context, id primitive.ObjectID) error {
+	_, err := r.collection.DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }

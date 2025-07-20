@@ -1,8 +1,8 @@
-module p3-graded-challenge-1-embapge/payment-service
+module p3-graded-challenge-2-embapge/payment-service
 
-go 1.24
+go 1.24.1
 
-toolchain go1.24.1
+toolchain go1.24.4
 
 require (
 	github.com/go-playground/validator/v10 v10.27.0
@@ -11,7 +11,10 @@ require (
 	go.mongodb.org/mongo-driver v1.17.4
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
+	p3-graded-challenge-2-embapge v0.0.0-00010101000000-000000000000
 )
+
+replace p3-graded-challenge-2-embapge => ../
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect

@@ -1,9 +1,9 @@
 package grpc
 
 import (
-	"auth-service/internal/auth/app"
-	"auth-service/internal/auth/delivery/grpc/pb"
 	"context"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/app"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/delivery/grpc/pb"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

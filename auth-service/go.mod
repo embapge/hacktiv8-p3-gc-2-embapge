@@ -1,4 +1,4 @@
-module auth-service
+module p3-graded-challenge-2-embapge/auth-service
 
 go 1.23.0
 

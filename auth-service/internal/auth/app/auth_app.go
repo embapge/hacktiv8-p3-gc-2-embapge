@@ -1,8 +1,8 @@
 package app
 
 import (
-	"auth-service/internal/auth/domain"
 	"context"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/domain"
 )
 
 type AuthApp struct {

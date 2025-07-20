@@ -4,9 +4,10 @@ import (
 	"log"
 	"os"
 
-	_ "p3-graded-challenge-1-embapge/gateway-service/docs"
-	"p3-graded-challenge-1-embapge/gateway-service/handler"
-	"p3-graded-challenge-1-embapge/gateway-service/middleware"
+	"p3-graded-challenge-2-embapge/gateway-service/config"
+	_ "p3-graded-challenge-2-embapge/gateway-service/docs"
+	"p3-graded-challenge-2-embapge/gateway-service/handler"
+	"p3-graded-challenge-2-embapge/gateway-service/middleware"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -153,7 +154,80 @@ func _SwaggerDeleteTransaction() {}
 // @Router /payments [post]
 func _SwaggerCreatePayment() {}
 
+// @Summary Login via Auth Service
+// @Description Login user via auth-service
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param credentials body LoginRequest true "Login credentials"
+// @Success 200 {object} AuthResponse
+// @Failure 401 {object} ErrorResponse
+// @Router /login [post]
+func _SwaggerLogin() {}
+
+// @Summary Register via Auth Service
+// @Description Register new user via auth-service
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user body RegisterRequest true "User registration data"
+// @Success 201 {object} AuthResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /register [post]
+func _SwaggerRegister() {}
+
+// @Summary Get all payments
+// @Description Retrieve all payments via payment-service
+// @Tags payments
+// @Produce json
+// @Success 200 {array} PaymentResponse
+// @Router /payments [get]
+func _SwaggerGetAllPayments() {}
+
+// @Summary Get payment by ID
+// @Description Retrieve payment by ID via payment-service
+// @Tags payments
+// @Produce json
+// @Param id path string true "Payment ID"
+// @Success 200 {object} PaymentResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /payments/{id} [get]
+func _SwaggerGetPaymentByID() {}
+
+// @Summary Delete payment by ID
+// @Description Delete payment via payment-service
+// @Tags payments
+// @Produce json
+// @Param id path string true "Payment ID"
+// @Success 200 {object} map[string]string
+// @Failure 404 {object} ErrorResponse
+// @Router /payments/{id} [delete]
+func _SwaggerDeletePayment() {}
+
 // ===== DTOs for Swagger =====
+// Auth Service DTOs
+// LoginRequest represents user login payload
+type LoginRequest struct {
+	Email    string `json:"email" example:"user@example.com"`
+	Password string `json:"password" example:"secret"`
+}
+
+// RegisterRequest represents user registration payload
+type RegisterRequest struct {
+	Name     string `json:"name" example:"John Doe"`
+	Email    string `json:"email" example:"user@example.com"`
+	Password string `json:"password" example:"secret"`
+}
+
+// AuthResponse represents authentication response from auth-service
+type AuthResponse struct {
+	Id    string `json:"id" example:"uuid-string"`
+	Name  string `json:"name" example:"John Doe"`
+	Email string `json:"email" example:"user@example.com"`
+	Token string `json:"token" example:"jwt-token-string"`
+}
+
+// DTOs for Swagger
 type CreateProductRequest struct {
 	Name  string  `json:"name"`
 	Price float64 `json:"price"`
@@ -200,23 +274,48 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+// PaymentListResponse represents list of payments from payment-service
+// swagger:response PaymentListResponse
+type PaymentListResponse struct {
+	Payments []PaymentResponse `json:"payments"`
+}
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using environment variables")
 	}
 
-	h := handler.NewGatewayHandler()
+	grpcClients := config.NewGRPCClients()
+
+	// Handler HTTP to service
+	h := handler.NewGatewayHandler(grpcClients)
 
 	e := echo.New()
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Use(middleware.JWTAuth)
-	// Proxy all /products* and /transactions* to shopping-service
-	e.Any("/products*", h.ProxyToShoppingService)
-	e.Any("/transactions*", h.ProxyToShoppingService)
+	e.POST("/login", h.ProxyToAuthService)
+	e.POST("/register", h.ProxyToAuthService)
 
-	// Proxy all /payments* to payment-service
-	e.Any("/payments*", h.ProxyToPaymentService)
+	// Define route groups by prefix
+	productRoute := e.Group("/products")
+	transactionRoute := e.Group("/transactions")
+	paymentRoute := e.Group("/payments")
+
+	swaggerRoute := e.Group("/swagger/*")
+	swaggerRoute.GET("/swagger/*", echoSwagger.WrapHandler)
+
+	productRoute.Use(middleware.JWTAuth)
+	transactionRoute.Use(middleware.JWTAuth)
+	paymentRoute.Use(middleware.JWTAuth)
+
+	// Proxy all /products and subpaths to shopping-service
+	productRoute.Any("", h.ProxyToShoppingService)
+	productRoute.Any("/*", h.ProxyToShoppingService)
+	// Proxy all /transactions and subpaths to shopping-service
+	transactionRoute.Any("", h.ProxyToShoppingService)
+	transactionRoute.Any("/*", h.ProxyToShoppingService)
+	// Proxy all /payments and subpaths to payment-service
+	paymentRoute.Any("", h.ProxyToPaymentService)
+	paymentRoute.Any("/*", h.ProxyToPaymentService)
 
 	port := os.Getenv("PORT")
 	if port == "" {

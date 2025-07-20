@@ -1,5 +1,124 @@
 basePath: /
 definitions:
+  dto.CreateProductRequest:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        minimum: 0
+        type: integer
+    required:
+    - name
+    - price
+    - stock
+    type: object
+  dto.CreateTransactionRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dto.ProductResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  dto.TransactionResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      payment_id:
+        type: string
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: string
+      total:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  dto.UpdateProductRequest:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        minimum: 0
+        type: integer
+    type: object
+  http.AuthResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      token:
+        type: string
+    type: object
+  http.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  http.RegisterRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  main.AuthResponse:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: uuid-string
+        type: string
+      name:
+        example: John Doe
+        type: string
+      token:
+        example: jwt-token-string
+        type: string
+    type: object
   main.CreatePaymentRequest:
     properties:
       amount:
@@ -24,6 +143,15 @@ definitions:
   main.ErrorResponse:
     properties:
       message:
+        type: string
+    type: object
+  main.LoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: secret
         type: string
     type: object
   main.PaymentResponse:
@@ -54,6 +182,18 @@ definitions:
       updated_at:
         type: string
     type: object
+  main.RegisterRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+      password:
+        example: secret
+        type: string
+    type: object
   main.TransactionResponse:
     properties:
       created_at:
@@ -82,6 +222,11 @@ definitions:
       stock:
         type: integer
     type: object
+  utility.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
 host: 34.101.156.80:8000
 info:
   contact: {}
@@ -89,7 +234,47 @@ info:
   title: Gateway API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login user via auth-service
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/main.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.AuthResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Login via Auth Service
+      tags:
+      - auth
   /payments:
+    get:
+      description: Retrieve all payments via payment-service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.PaymentResponse'
+            type: array
+      summary: Get all payments
+      tags:
+      - payments
     post:
       consumes:
       - application/json
@@ -119,6 +304,53 @@ paths:
       summary: Create payment
       tags:
       - payments
+  /payments/{id}:
+    delete:
+      description: Delete payment via payment-service
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Delete payment by ID
+      tags:
+      - payments
+    get:
+      description: Retrieve payment by ID via payment-service
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.PaymentResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Get payment by ID
+      tags:
+      - payments
   /products:
     get:
       description: Get all products
@@ -129,12 +361,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/main.ProductResponse'
+              $ref: '#/definitions/dto.ProductResponse'
             type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
       summary: Get all products
       tags:
       - products
@@ -148,22 +380,22 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/main.CreateProductRequest'
+          $ref: '#/definitions/dto.CreateProductRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/main.ProductResponse'
+            $ref: '#/definitions/dto.ProductResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
       summary: Create a new product
       tags:
       - products
@@ -184,15 +416,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
       summary: Delete a product
       tags:
       - products
@@ -210,19 +442,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.ProductResponse'
+            $ref: '#/definitions/dto.ProductResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
       summary: Get product by ID
       tags:
       - products
@@ -241,29 +473,55 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/main.UpdateProductRequest'
+          $ref: '#/definitions/dto.UpdateProductRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.ProductResponse'
+            $ref: '#/definitions/dto.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utility.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utility.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utility.ErrorResponse'
+      summary: Update a product
+      tags:
+      - products
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register new user via auth-service
+      parameters:
+      - description: User registration data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/main.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/main.AuthResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/main.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/main.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/main.ErrorResponse'
-      summary: Update a product
+      summary: Register via Auth Service
       tags:
-      - products
+      - auth
   /transactions:
     get:
       description: Get all transactions
@@ -293,22 +551,22 @@ paths:
         name: transaction
         required: true
         schema:
-          $ref: '#/definitions/main.CreateTransactionRequest'
+          $ref: '#/definitions/dto.CreateTransactionRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/main.TransactionResponse'
+            $ref: '#/definitions/dto.TransactionResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/utility.ErrorResponse'
       summary: Create a new transaction
       tags:
       - transactions

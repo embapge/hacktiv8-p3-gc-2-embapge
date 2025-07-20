@@ -2,7 +2,7 @@ version: "3.8"
 services:
   mongodb:
     image: mongo:7
-    container_name: mongodb
+    container_name: mongodb-gc2
     restart: always
     ports:
       - "27017:27017"
@@ -45,7 +45,9 @@ services:
       - "8080:8080"
 
   payment-service:
-    build: ./payment-service
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
     container_name: payment-service
     restart: unless-stopped
     env_file:
@@ -53,27 +55,58 @@ services:
     environment:
       - MONGO_URI=mongodb://mongodb:27017
       - MONGO_DB=p3_w1_gc_embapge
-      - PORT=8081
+      - GRPC_PORT=50052
     depends_on:
       - mongodb
     ports:
       - "8081:8081"
 
+  # MySQL for auth-service
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    env_file:
+      - ./auth-service/.env
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./auth-service/auth.sql:/docker-entrypoint-initdb.d/auth.sql:ro
+    ports:
+      - "3308:3306" # host port changed to 3308 to avoid conflict
+
+  # Auth Service using MySQL
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    restart: unless-stopped
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      - mysql
+    ports:
+      - "8082:8082"
+
   gateway-service:
-    build: ./gateway-service
+    build:
+      context: .
+      dockerfile: gateway-service/Dockerfile
     container_name: gateway-service
     restart: unless-stopped
     env_file:
       - ./gateway-service/.env
     environment:
       - SHOPPING_SERVICE_URL=http://shopping-service:8080
-      - PAYMENT_SERVICE_URL=http://payment-service:8081
+      - PAYMENT_SERVICE_URL=http://payment-service:50052
+      - AUTH_SERVICE_URL=http://auth-service:8082
+      - JWT_SECRET=mysecretkey123
       - PORT=8000
     depends_on:
       - shopping-service
       - payment-service
+      - auth-service
     ports:
       - "8000:8000"
 
 volumes:
   mongo_data:
+  mysql_data:

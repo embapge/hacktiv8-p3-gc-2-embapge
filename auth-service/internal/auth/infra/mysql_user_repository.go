@@ -1,11 +1,11 @@
 package infra
 
 import (
-	"auth-service/internal/auth/domain"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/domain"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -94,11 +94,18 @@ func (r *mySQLUserRepository) Create(ctx context.Context, user *domain.User) (*d
 		return &domain.User{}, errors.New("failed to generate UUID")
 	}
 
-	result, _ := r.db.ExecContext(ctx, "INSERT INTO users (id, name, email, password, saldo) VALUES (?, ?, ?, ?, ?)", uuid, user.Name, user.Email, user.Password, user.Saldo)
-	rowsAffected, _ := result.RowsAffected()
-
+	result, err := r.db.ExecContext(ctx,
+		"INSERT INTO users (id, name, email, password, saldo) VALUES (?, ?, ?, ?, ?)",
+		uuid, user.Name, user.Email, user.Password, user.Saldo)
+	if err != nil {
+		return nil, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
 	if rowsAffected == 0 {
-		return &domain.User{}, nil
+		return nil, errors.New("no user inserted")
 	}
 
 	user.ID = uuid

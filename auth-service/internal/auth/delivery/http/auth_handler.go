@@ -1,8 +1,8 @@
 package http
 
 import (
-	"auth-service/internal/auth/app"
 	"net/http"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/app"
 
 	"github.com/labstack/echo/v4"
 )

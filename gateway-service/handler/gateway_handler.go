@@ -4,14 +4,20 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"p3-graded-challenge-2-embapge/gateway-service/config"
+	paymentpb "p3-graded-challenge-2-embapge/proto/payment"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-type GatewayHandler struct{}
+type GatewayHandler struct {
+	GRPC *config.GRPCClients
+}
 
-func NewGatewayHandler() *GatewayHandler {
-	return &GatewayHandler{}
+func NewGatewayHandler(grpcClients *config.GRPCClients) *GatewayHandler {
+	return &GatewayHandler{GRPC: grpcClients}
 }
 
 func (h *GatewayHandler) ProxyToShoppingService(c echo.Context) error {
@@ -19,9 +25,56 @@ func (h *GatewayHandler) ProxyToShoppingService(c echo.Context) error {
 	return proxyRequest(c, shoppingURL)
 }
 
+func (h *GatewayHandler) ProxyToAuthService(c echo.Context) error {
+	authURL := os.Getenv("AUTH_SERVICE_URL")
+	return proxyRequest(c, authURL)
+}
+
 func (h *GatewayHandler) ProxyToPaymentService(c echo.Context) error {
-	paymentURL := os.Getenv("PAYMENT_SERVICE_URL")
-	return proxyRequest(c, paymentURL)
+	ctx := c.Request().Context()
+	method := c.Request().Method
+	path := c.Request().URL.Path
+
+	// Assume h.GRPC.PaymentClient is available and initialized
+
+	switch method {
+	case http.MethodPost:
+		var req paymentpb.CreatePaymentRequest
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+		}
+		resp, err := h.GRPC.PaymentClient.CreatePayment(ctx, &req)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		}
+		return c.JSON(http.StatusCreated, resp)
+	case http.MethodGet:
+		if strings.HasPrefix(path, "/payments/") && len(path) > len("/payments/") {
+			id := strings.TrimPrefix(path, "/payments/")
+			resp, err := h.GRPC.PaymentClient.GetByIDPayment(ctx, &paymentpb.PaymentIDRequest{Id: id})
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			}
+			return c.JSON(http.StatusOK, resp)
+		}
+		resp, err := h.GRPC.PaymentClient.GetAllPayment(ctx, &emptypb.Empty{})
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		}
+		return c.JSON(http.StatusOK, resp)
+	case http.MethodDelete:
+		if strings.HasPrefix(path, "/payments/") && len(path) > len("/payments/") {
+			id := strings.TrimPrefix(path, "/payments/")
+			resp, err := h.GRPC.PaymentClient.DeletePayment(ctx, &paymentpb.PaymentIDRequest{Id: id})
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			}
+			return c.JSON(http.StatusOK, resp)
+		}
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "id missing"})
+	default:
+		return c.NoContent(http.StatusMethodNotAllowed)
+	}
 }
 
 func proxyRequest(c echo.Context, targetURL string) error {

@@ -15,7 +15,68 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "description": "Login user via auth-service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login via Auth Service",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/payments": {
+            "get": {
+                "description": "Retrieve all payments via payment-service",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get all payments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/main.PaymentResponse"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create payment via payment-service",
                 "consumes": [
@@ -61,6 +122,77 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/{id}": {
+            "get": {
+                "description": "Retrieve payment by ID via payment-service",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Get payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.PaymentResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete payment via payment-service",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Delete payment by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/main.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "description": "Get all products",
@@ -77,14 +209,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/main.ProductResponse"
+                                "$ref": "#/definitions/dto.ProductResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     }
                 }
@@ -108,7 +240,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.CreateProductRequest"
+                            "$ref": "#/definitions/dto.CreateProductRequest"
                         }
                     }
                 ],
@@ -116,19 +248,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/main.ProductResponse"
+                            "$ref": "#/definitions/dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     }
                 }
@@ -157,25 +289,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.ProductResponse"
+                            "$ref": "#/definitions/dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     }
                 }
@@ -206,7 +338,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.UpdateProductRequest"
+                            "$ref": "#/definitions/dto.UpdateProductRequest"
                         }
                     }
                 ],
@@ -214,25 +346,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.ProductResponse"
+                            "$ref": "#/definitions/dto.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     }
                 }
@@ -262,17 +394,57 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utility.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Register new user via auth-service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register via Auth Service",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/main.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/main.ErrorResponse"
                         }
@@ -327,7 +499,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.CreateTransactionRequest"
+                            "$ref": "#/definitions/dto.CreateTransactionRequest"
                         }
                     }
                 ],
@@ -335,19 +507,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/main.TransactionResponse"
+                            "$ref": "#/definitions/dto.TransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/utility.ErrorResponse"
                         }
                     }
                 }
@@ -501,6 +673,182 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CreateProductRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "price",
+                "stock"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "dto.CreateTransactionRequest": {
+            "type": "object",
+            "required": [
+                "product_id",
+                "quantity"
+            ],
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "dto.ProductResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "payment_id": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateProductRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "http.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "main.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "uuid-string"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "jwt-token-string"
+                }
+            }
+        },
         "main.CreatePaymentRequest": {
             "type": "object",
             "properties": {
@@ -539,6 +887,19 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "main.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "secret"
                 }
             }
         },
@@ -585,6 +946,23 @@ const docTemplate = `{
                 }
             }
         },
+        "main.RegisterRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "secret"
+                }
+            }
+        },
         "main.TransactionResponse": {
             "type": "object",
             "properties": {
@@ -625,6 +1003,14 @@ const docTemplate = `{
                 },
                 "stock": {
                     "type": "integer"
+                }
+            }
+        },
+        "utility.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }

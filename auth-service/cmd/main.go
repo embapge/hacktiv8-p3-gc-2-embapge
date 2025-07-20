@@ -5,14 +5,14 @@ import (
 	"log"
 	"os"
 
-	"auth-service/internal/auth/app"
-	"auth-service/internal/auth/config"
-	"auth-service/internal/auth/delivery/http"
-	"auth-service/internal/auth/infra"
-	"auth-service/pkg/hasher"
-	"auth-service/pkg/jwt"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/app"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/config"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/delivery/http"
+	"p3-graded-challenge-2-embapge/auth-service/internal/auth/infra"
+	"p3-graded-challenge-2-embapge/auth-service/pkg/hasher"
+	"p3-graded-challenge-2-embapge/auth-service/pkg/jwt"
 
-	_ "auth-service/docs"
+	_ "p3-graded-challenge-2-embapge/auth-service/docs"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"

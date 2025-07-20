@@ -1,8 +1,8 @@
 package grpc
 
 import (
-	"auth-service/pkg/jwt"
 	"context"
+	"p3-graded-challenge-2-embapge/auth-service/pkg/jwt"
 	"strings"
 
 	"google.golang.org/grpc"

@@ -17,7 +17,8 @@ func JWTAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		tokenRequest := strings.TrimPrefix(authHeader, "Bearer ")
-		secretToken := os.Getenv("JWT_TOKEN")
+		// Use JWT_SECRET (set in env_file) as the signing secret
+		secretToken := os.Getenv("JWT_SECRET")
 
 		token, err := jwt.Parse(tokenRequest, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
