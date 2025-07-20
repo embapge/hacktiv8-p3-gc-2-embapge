@@ -96,7 +96,7 @@ services:
       - ./gateway-service/.env
     environment:
       - SHOPPING_SERVICE_URL=http://shopping-service:8080
-      - PAYMENT_SERVICE_URL=http://payment-service:50052
+      - PAYMENT_SERVICE_URL=payment-service:50052
       - AUTH_SERVICE_URL=http://auth-service:8082
       - JWT_SECRET=mysecretkey123
       - PORT=8000
