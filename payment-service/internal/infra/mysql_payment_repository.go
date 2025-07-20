@@ -1,4 +1,4 @@
-package repository
+package infra
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type paymentRepository struct {
 	collection *mongo.Collection
 }
 
-func NewPaymentRepository(collection *mongo.Collection) PaymentRepository {
+func NewPaymentRepository(collection *mongo.Collection) domain.PaymentRepository {
 	return &paymentRepository{collection: collection}
 }
 

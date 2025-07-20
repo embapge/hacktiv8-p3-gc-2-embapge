@@ -1,27 +1,27 @@
-package handler
+package http
 
 import (
 	"net/http"
-	"p3-graded-challenge-1-embapge/payment-service/internal/dto"
-	"p3-graded-challenge-1-embapge/payment-service/internal/interfaces/service"
+	"p3-graded-challenge-1-embapge/payment-service/app"
+	"p3-graded-challenge-1-embapge/payment-service/internal/delivery/http/dto"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
-type paymentHandler struct {
-	service   service.PaymentService
+type PaymentHandler struct {
+	app       *app.PaymentApp
 	validator *validator.Validate
 }
 
-func NewPaymentHandler(service service.PaymentService) *paymentHandler {
-	return &paymentHandler{
-		service:   service,
+func NewPaymentHandler(app *app.PaymentApp) *PaymentHandler {
+	return &PaymentHandler{
+		app:       app,
 		validator: validator.New(),
 	}
 }
 
-func (h *paymentHandler) CreatePayment(c echo.Context) error {
+func (h *PaymentHandler) CreatePayment(c echo.Context) error {
 	var req dto.CreatePaymentRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid request body"})
@@ -29,7 +29,7 @@ func (h *paymentHandler) CreatePayment(c echo.Context) error {
 	if err := h.validator.Struct(req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"message": err.Error()})
 	}
-	payment, err := h.service.CreatePayment(c.Request().Context(), req)
+	payment, err := h.app.CreatePayment(c.Request().Context(), req)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to create payment"})
 	}

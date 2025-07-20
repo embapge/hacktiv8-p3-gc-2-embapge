@@ -3,11 +3,10 @@ package main
 import (
 	"log"
 	"os"
+	"p3-graded-challenge-1-embapge/payment-service/app"
 	"p3-graded-challenge-1-embapge/payment-service/config"
-	"p3-graded-challenge-1-embapge/payment-service/internal/handler"
-	"p3-graded-challenge-1-embapge/payment-service/internal/repository"
-	"p3-graded-challenge-1-embapge/payment-service/internal/router"
-	"p3-graded-challenge-1-embapge/payment-service/internal/service"
+	"p3-graded-challenge-1-embapge/payment-service/internal/delivery/http"
+	"p3-graded-challenge-1-embapge/payment-service/internal/infra"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -27,13 +26,12 @@ func main() {
 	db := config.ConnectDB()
 	paymentCollection := config.GetCollection(db, "payments")
 
-	paymentRepo := repository.NewPaymentRepository(paymentCollection)
-	paymentService := service.NewPaymentService(paymentRepo)
-	paymentHandler := handler.NewPaymentHandler(paymentService)
+	paymentRepo := infra.NewPaymentRepository(paymentCollection)
+	paymentApp := app.NewPaymentApp(paymentRepo)
+	paymentHandler := http.NewPaymentHandler(paymentApp)
 
 	e := echo.New()
-
-	router.NewRouter(e, paymentHandler)
+	e.POST("/payments", paymentHandler.CreatePayment)
 
 	e.Logger.Fatal(e.Start(":" + port))
 }
