@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "34.101.156.80:8000",
+    "host": "34.101.116.9:8000",
     "basePath": "/",
     "paths": {
         "/login": {
@@ -51,6 +51,11 @@
         },
         "/payments": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve all payments via payment-service",
                 "produces": [
                     "application/json"
@@ -72,6 +77,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create payment via payment-service",
                 "consumes": [
                     "application/json"
@@ -118,6 +128,11 @@
         },
         "/payments/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve payment by ID via payment-service",
                 "produces": [
                     "application/json"
@@ -151,6 +166,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete payment via payment-service",
                 "produces": [
                     "application/json"
@@ -448,6 +468,11 @@
         },
         "/transactions": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get all transactions",
                 "produces": [
                     "application/json"
@@ -521,6 +546,11 @@
         },
         "/transactions/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get transaction by ID",
                 "produces": [
                     "application/json"
@@ -566,6 +596,11 @@
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a transaction with the input payload",
                 "consumes": [
                     "application/json"
@@ -623,6 +658,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete a transaction by ID",
                 "produces": [
                     "application/json"
@@ -1007,6 +1047,13 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

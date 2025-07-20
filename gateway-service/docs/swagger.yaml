@@ -227,7 +227,7 @@ definitions:
       message:
         type: string
     type: object
-host: 34.101.156.80:8000
+host: 34.101.116.9:8000
 info:
   contact: {}
   description: API Gateway for Shopping and Payment Services
@@ -272,6 +272,8 @@ paths:
             items:
               $ref: '#/definitions/main.PaymentResponse'
             type: array
+      security:
+      - ApiKeyAuth: []
       summary: Get all payments
       tags:
       - payments
@@ -301,6 +303,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create payment
       tags:
       - payments
@@ -326,6 +330,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Delete payment by ID
       tags:
       - payments
@@ -348,6 +354,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get payment by ID
       tags:
       - payments
@@ -538,6 +546,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get all transactions
       tags:
       - transactions
@@ -596,6 +606,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Delete a transaction
       tags:
       - transactions
@@ -626,6 +638,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get transaction by ID
       tags:
       - transactions
@@ -664,7 +678,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update a transaction
       tags:
       - transactions
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

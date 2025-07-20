@@ -57,6 +57,11 @@ const docTemplate = `{
         },
         "/payments": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve all payments via payment-service",
                 "produces": [
                     "application/json"
@@ -78,6 +83,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create payment via payment-service",
                 "consumes": [
                     "application/json"
@@ -124,6 +134,11 @@ const docTemplate = `{
         },
         "/payments/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve payment by ID via payment-service",
                 "produces": [
                     "application/json"
@@ -157,6 +172,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete payment via payment-service",
                 "produces": [
                     "application/json"
@@ -454,6 +474,11 @@ const docTemplate = `{
         },
         "/transactions": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get all transactions",
                 "produces": [
                     "application/json"
@@ -527,6 +552,11 @@ const docTemplate = `{
         },
         "/transactions/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get transaction by ID",
                 "produces": [
                     "application/json"
@@ -572,6 +602,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a transaction with the input payload",
                 "consumes": [
                     "application/json"
@@ -629,6 +664,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete a transaction by ID",
                 "produces": [
                     "application/json"
@@ -1014,13 +1054,20 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "34.101.156.80:8000",
+	Host:             "34.101.116.9:8000",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Gateway API",
