@@ -31,21 +31,21 @@ import (
 // @Accept json
 // @Produce json
 // @Param product body CreateProductRequest true "Create Product"
-// @Success 201 {object} ProductResponse
+// @Success 201 {object} main.ProductResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /products [post]
 // @Security ApiKeyAuth
+// @Router /products [post]
 func _SwaggerCreateProduct() {}
 
 // @Summary Get all products
 // @Description Get all products
 // @Tags products
 // @Produce json
-// @Success 200 {array} ProductResponse
+// @Success 200 {array} main.ProductResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /products [get]
 // @Security ApiKeyAuth
+// @Router /products [get]
 func _SwaggerGetAllProducts() {}
 
 // @Summary Get product by ID
@@ -53,12 +53,12 @@ func _SwaggerGetAllProducts() {}
 // @Tags products
 // @Produce json
 // @Param id path string true "Product ID"
-// @Success 200 {object} ProductResponse
+// @Success 200 {object} main.ProductResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /products/{id} [get]
 // @Security ApiKeyAuth
+// @Router /products/{id} [get]
 func _SwaggerGetProductByID() {}
 
 // @Summary Update a product
@@ -67,13 +67,13 @@ func _SwaggerGetProductByID() {}
 // @Accept json
 // @Produce json
 // @Param id path string true "Product ID"
-// @Param product body UpdateProductRequest true "Update Product"
-// @Success 200 {object} ProductResponse
+// @Param product body main.UpdateProductRequest true "Update Product"
+// @Success 200 {object} main.ProductResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /products/{id} [put]
 // @Security ApiKeyAuth
+// @Router /products/{id} [put]
 func _SwaggerUpdateProduct() {}
 
 // @Summary Delete a product
@@ -85,8 +85,8 @@ func _SwaggerUpdateProduct() {}
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /products/{id} [delete]
 // @Security ApiKeyAuth
+// @Router /products/{id} [delete]
 func _SwaggerDeleteProduct() {}
 
 // @Summary Create a new transaction
@@ -98,8 +98,8 @@ func _SwaggerDeleteProduct() {}
 // @Success 201 {object} TransactionResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /transactions [post]
 // @Security ApiKeyAuth
+// @Router /transactions [post]
 func _SwaggerCreateTransaction() {}
 
 // @Summary Get all transactions
@@ -154,7 +154,6 @@ func _SwaggerUpdateTransaction() {}
 func _SwaggerDeleteTransaction() {}
 
 // ===== Swagger Documentation for Payment Service =====
-
 // @Summary Create payment
 // @Description Create payment via payment-service
 // @Tags payments
@@ -317,8 +316,7 @@ func main() {
 	transactionRoute := e.Group("/transactions")
 	paymentRoute := e.Group("/payments")
 
-	swaggerRoute := e.Group("/swagger/*")
-	swaggerRoute.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	productRoute.Use(middleware.JWTAuth)
 	transactionRoute.Use(middleware.JWTAuth)

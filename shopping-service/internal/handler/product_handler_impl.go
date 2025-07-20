@@ -24,17 +24,6 @@ func NewProductHandler(service service.ProductService) handler.ProductHandler {
 	}
 }
 
-// CreateProduct godoc
-// @Summary Create a new product
-// @Description Create a new product with the input payload
-// @Tags products
-// @Accept  json
-// @Produce  json
-// @Param product body dto.CreateProductRequest true "Create Product"
-// @Success 201 {object} dto.ProductResponse
-// @Failure 400 {object} utility.ErrorResponse
-// @Failure 500 {object} utility.ErrorResponse
-// @Router /products [post]
 func (h *productHandler) CreateProduct(c echo.Context) error {
 	var req dto.CreateProductRequest
 	if err := c.Bind(&req); err != nil {
@@ -53,14 +42,6 @@ func (h *productHandler) CreateProduct(c echo.Context) error {
 	return c.JSON(http.StatusCreated, product)
 }
 
-// GetAllProducts godoc
-// @Summary Get all products
-// @Description Get all products
-// @Tags products
-// @Produce  json
-// @Success 200 {array} dto.ProductResponse
-// @Failure 500 {object} utility.ErrorResponse
-// @Router /products [get]
 func (h *productHandler) GetAllProducts(c echo.Context) error {
 	products, err := h.service.GetAllProducts(c.Request().Context())
 	if err != nil {
@@ -68,18 +49,6 @@ func (h *productHandler) GetAllProducts(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, products)
 }
-
-// GetProductByID godoc
-// @Summary Get product by ID
-// @Description Get product by ID
-// @Tags products
-// @Produce  json
-// @Param id path string true "Product ID"
-// @Success 200 {object} dto.ProductResponse
-// @Failure 400 {object} utility.ErrorResponse
-// @Failure 404 {object} utility.ErrorResponse
-// @Failure 500 {object} utility.ErrorResponse
-// @Router /products/{id} [get]
 func (h *productHandler) GetProductByID(c echo.Context) error {
 	id := c.Param("id")
 	product, err := h.service.GetProductByID(c.Request().Context(), id)
@@ -95,19 +64,6 @@ func (h *productHandler) GetProductByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, product)
 }
 
-// UpdateProduct godoc
-// @Summary Update a product
-// @Description Update a product with the input payload
-// @Tags products
-// @Accept  json
-// @Produce  json
-// @Param id path string true "Product ID"
-// @Param product body dto.UpdateProductRequest true "Update Product"
-// @Success 200 {object} dto.ProductResponse
-// @Failure 400 {object} utility.ErrorResponse
-// @Failure 404 {object} utility.ErrorResponse
-// @Failure 500 {object} utility.ErrorResponse
-// @Router /products/{id} [put]
 func (h *productHandler) UpdateProduct(c echo.Context) error {
 	id := c.Param("id")
 	var req dto.UpdateProductRequest
@@ -132,17 +88,6 @@ func (h *productHandler) UpdateProduct(c echo.Context) error {
 	return c.JSON(http.StatusOK, product)
 }
 
-// DeleteProduct godoc
-// @Summary Delete a product
-// @Description Delete a product by ID
-// @Tags products
-// @Produce  json
-// @Param id path string true "Product ID"
-// @Success 204 "No Content"
-// @Failure 400 {object} utility.ErrorResponse
-// @Failure 404 {object} utility.ErrorResponse
-// @Failure 500 {object} utility.ErrorResponse
-// @Router /products/{id} [delete]
 func (h *productHandler) DeleteProduct(c echo.Context) error {
 	id := c.Param("id")
 	err := h.service.DeleteProduct(c.Request().Context(), id)

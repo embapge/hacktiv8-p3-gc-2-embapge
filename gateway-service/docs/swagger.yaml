@@ -1,74 +1,5 @@
 basePath: /
 definitions:
-  dto.CreateProductRequest:
-    properties:
-      name:
-        type: string
-      price:
-        type: number
-      stock:
-        minimum: 0
-        type: integer
-    required:
-    - name
-    - price
-    - stock
-    type: object
-  dto.CreateTransactionRequest:
-    properties:
-      product_id:
-        type: string
-      quantity:
-        minimum: 1
-        type: integer
-    required:
-    - product_id
-    - quantity
-    type: object
-  dto.ProductResponse:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      price:
-        type: number
-      stock:
-        type: integer
-      updated_at:
-        type: string
-    type: object
-  dto.TransactionResponse:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      payment_id:
-        type: string
-      product_id:
-        type: string
-      quantity:
-        type: integer
-      status:
-        type: string
-      total:
-        type: number
-      updated_at:
-        type: string
-    type: object
-  dto.UpdateProductRequest:
-    properties:
-      name:
-        type: string
-      price:
-        type: number
-      stock:
-        minimum: 0
-        type: integer
-    type: object
   http.AuthResponse:
     properties:
       email:
@@ -222,11 +153,6 @@ definitions:
       stock:
         type: integer
     type: object
-  utility.ErrorResponse:
-    properties:
-      message:
-        type: string
-    type: object
 host: 34.101.116.9:8000
 info:
   contact: {}
@@ -369,12 +295,14 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/dto.ProductResponse'
+              $ref: '#/definitions/main.ProductResponse'
             type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get all products
       tags:
       - products
@@ -388,22 +316,24 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateProductRequest'
+          $ref: '#/definitions/main.CreateProductRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/dto.ProductResponse'
+            $ref: '#/definitions/main.ProductResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create a new product
       tags:
       - products
@@ -424,15 +354,17 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Delete a product
       tags:
       - products
@@ -450,19 +382,21 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ProductResponse'
+            $ref: '#/definitions/main.ProductResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get product by ID
       tags:
       - products
@@ -481,26 +415,28 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateProductRequest'
+          $ref: '#/definitions/main.UpdateProductRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ProductResponse'
+            $ref: '#/definitions/main.ProductResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Update a product
       tags:
       - products
@@ -561,22 +497,24 @@ paths:
         name: transaction
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateTransactionRequest'
+          $ref: '#/definitions/main.CreateTransactionRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/dto.TransactionResponse'
+            $ref: '#/definitions/main.TransactionResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/utility.ErrorResponse'
+            $ref: '#/definitions/main.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create a new transaction
       tags:
       - transactions

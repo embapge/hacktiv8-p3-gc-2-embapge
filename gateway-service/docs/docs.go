@@ -215,6 +215,11 @@ const docTemplate = `{
         },
         "/products": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get all products",
                 "produces": [
                     "application/json"
@@ -229,19 +234,24 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/dto.ProductResponse"
+                                "$ref": "#/definitions/main.ProductResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a new product with the input payload",
                 "consumes": [
                     "application/json"
@@ -260,7 +270,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateProductRequest"
+                            "$ref": "#/definitions/main.CreateProductRequest"
                         }
                     }
                 ],
@@ -268,19 +278,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/main.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
                 }
@@ -288,6 +298,11 @@ const docTemplate = `{
         },
         "/products/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get product by ID",
                 "produces": [
                     "application/json"
@@ -309,30 +324,35 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/main.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update a product with the input payload",
                 "consumes": [
                     "application/json"
@@ -358,7 +378,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateProductRequest"
+                            "$ref": "#/definitions/main.UpdateProductRequest"
                         }
                     }
                 ],
@@ -366,30 +386,35 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ProductResponse"
+                            "$ref": "#/definitions/main.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete a product by ID",
                 "produces": [
                     "application/json"
@@ -414,19 +439,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
                 }
@@ -506,6 +531,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a new transaction and payment",
                 "consumes": [
                     "application/json"
@@ -524,7 +554,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateTransactionRequest"
+                            "$ref": "#/definitions/main.CreateTransactionRequest"
                         }
                     }
                 ],
@@ -532,19 +562,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.TransactionResponse"
+                            "$ref": "#/definitions/main.TransactionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utility.ErrorResponse"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
                 }
@@ -713,109 +743,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.CreateProductRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "price",
-                "stock"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "stock": {
-                    "type": "integer",
-                    "minimum": 0
-                }
-            }
-        },
-        "dto.CreateTransactionRequest": {
-            "type": "object",
-            "required": [
-                "product_id",
-                "quantity"
-            ],
-            "properties": {
-                "product_id": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer",
-                    "minimum": 1
-                }
-            }
-        },
-        "dto.ProductResponse": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "stock": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.TransactionResponse": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "payment_id": {
-                    "type": "string"
-                },
-                "product_id": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "total": {
-                    "type": "number"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdateProductRequest": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "stock": {
-                    "type": "integer",
-                    "minimum": 0
-                }
-            }
-        },
         "http.AuthResponse": {
             "type": "object",
             "properties": {
@@ -1043,14 +970,6 @@ const docTemplate = `{
                 },
                 "stock": {
                     "type": "integer"
-                }
-            }
-        },
-        "utility.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
                 }
             }
         }

@@ -23,17 +23,6 @@ func NewTransactionHandler(service service.TransactionService) handler.Transacti
 	}
 }
 
-// CreateTransaction godoc
-// @Summary Create a new transaction
-// @Description Create a new transaction and payment
-// @Tags transactions
-// @Accept  json
-// @Produce  json
-// @Param transaction body dto.CreateTransactionRequest true "Create Transaction"
-// @Success 201 {object} dto.TransactionResponse
-// @Failure 400 {object} utility.ErrorResponse
-// @Failure 500 {object} utility.ErrorResponse
-// @Router /transactions [post]
 func (h *transactionHandler) CreateTransaction(c echo.Context) error {
 	var req dto.CreateTransactionRequest
 	if err := c.Bind(&req); err != nil {
